@@ -26,16 +26,16 @@ This is a chat server capable of handling multiple clients.
 
 ### Server side:
 
-![alt text](server.png)
+![Server](screenshots/server.png)
 
-### Client side:
+### Client side 1:
 
-![alt text](client1.png)
+![Client 1](screenshots/client1.png)
 
-### Client side:
+### Client side 2:
 
-![alt text](screenshots/image-2.png)
+![Client 2](screenshots/client2.png)
 
-### Client side:
+### Client side 3:
 
-![alt text](client2.png)
+![Client 3](screenshots/client3.png)
