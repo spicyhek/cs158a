@@ -23,9 +23,11 @@ def connect_client(client_conn, addr):
             client_conn.close()
             break
         else:
-            for other_client in clients: # send message to all other clients
-                if other_client != client_conn: # do not send message back to sender
-                    other_client.send(f"{addr[1]}: {msg}".encode())
+            print(f"{addr[1]}: {msg}") # print message from clients
+            with lock:
+                for other_client in clients: # send message to all other clients
+                    if other_client != client_conn: # do not send message back to sender
+                        other_client.send(f"{addr[1]}: {msg}".encode())
 
 def main (): 
     serverSocket = socket(AF_INET, SOCK_STREAM) # create TCP socket
