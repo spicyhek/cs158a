@@ -12,10 +12,7 @@ def receive_messages(client_socket): # recieve messages from server
 def send_message(client_socket): # send messages to server
     while True:
         msg = input()
-        try:
-            client_socket.send(msg.encode())
-        except:
-            break
+        client_socket.send(msg.encode())
         if msg == 'exit':
             break    
 
