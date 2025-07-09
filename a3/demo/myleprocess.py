@@ -8,10 +8,10 @@ class Message:
         self.flag = flag
 
     def to_json(self):
-        return json.dumps({'uuid': self.uuid, 'flag': self.flag}) + '\n'
+        return json.dumps({'uuid': self.uuid, 'flag': self.flag}) + '\n' # newline added as delimiter
 
     @staticmethod # called before instantiation
-    def from_json(s):
+    def from_json(s): # deserialize from JSON string to Message object
         data = json.loads(s)
         return Message(data['uuid'], data['flag'])
 
@@ -26,7 +26,7 @@ def start_server(host, port):
 # connect to neighbor TCP server
 def connect_neighbor(host, port):
     client = socket(AF_INET, SOCK_STREAM)
-    while True:
+    while True: # retry until a neighbor is connected
         try:
             client.connect((host, port))
             return client
@@ -47,14 +47,14 @@ forwarded = False
 log_file = f"log{server_port % 10}.txt" # for demo, use port % 10 to get log file name
 log = open(log_file, 'a', buffering=1) # open for appending w/ newline buffering
 
-def log_send(msg):
+def log_send(msg): # log sent messages from my process
     log.write(f"Sent: uuid={msg.uuid}, flag={msg.flag}\n")
 
-def log_receive(msg, comparison):
+def log_receive(msg, comparison): # log received messages from neighbor
     extra = f", leader={leader_id}" if state == 1 else ''
     log.write(f"Received: uuid={msg.uuid}, flag={msg.flag}, {comparison}, state={state}{extra}\n")
 
-ready = threading.Event() # to synchronize server and client connections
+ready = threading.Event() # to synchronize server and client connections before starting election
 server_conn = None
 neighbor_conn = None
 
@@ -63,19 +63,21 @@ def mark_ready():
         ready.set()
 
 # start server and mark ready for connections
-def serve(host, port):
+def server(host, port): 
     global server_conn
     server_conn = start_server(host, port)
     mark_ready()
 
-threading.Thread(target=serve, args=(server_host, server_port)).start()
+# start server in a thread
+threading.Thread(target=server, args=(server_host, server_port)).start()
 
 # connect to neighbor and mark ready for connections
-def connect(host, port):
+def connect(host, port): 
     global neighbor_conn
     neighbor_conn = connect_neighbor(host, port)
     mark_ready()
 
+# connect to neighbor in a thread
 threading.Thread(target=connect, args=(neighbor_host, neighbor_port)).start()
 
 # wait for server and neighbor to be ready
@@ -88,7 +90,7 @@ def send(msg):
 
 send(Message(str(my_id), 0))
 
-# election process
+# election logic
 buffer = ''
 while True:
     data = server_conn.recv(4096).decode()
@@ -108,17 +110,19 @@ while True:
 
         if msg.flag == 0 and state == 0:
             if comparison == 'greater':
-                send(msg)
+                send(msg) # forward message to neighbor if it is greater
             elif comparison == 'same':
-                state = 1 
-                leader_id = my_id
+                # declare myself as leader if i receive my own uuid and announce it
+                state = 1
+                leader_id = my_id 
                 send(Message(str(my_id), 1))
         elif msg.flag == 1:
+            # if i receive a leader announcement and im not the leader, set sender as leader
             if state == 0:
                 state = 1; 
                 leader_id = sender_id 
-                send(msg); forwarded = True 
-            elif not forwarded and sender_id == leader_id:
+                send(msg); forwarded = True # forward the leader message
+            elif not forwarded and sender_id == leader_id: # if i receive a message with flag 1 from the leader, forward it
                 send(msg); forwarded = True
 
     if state == 1 and forwarded:
