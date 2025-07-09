@@ -4,7 +4,7 @@ This is a simulation of the leader election process on a network.
 
 ## How to Run
 
-- Note: To simulate multiple computers in the network on one computer, the port number of each server and client must be different. To do this, editing the config file in between creating each server/client is needed and shown below.
+- Note: To simulate multiple computers in the network on one computer, the port number of each server and client must be different. To do this, editing `config.txt` in between creating each server/client is needed and shown below.
 - Use Python 3
 
 1. Ensure that config.txt reads:
@@ -53,4 +53,16 @@ This is a simulation of the leader election process on a network.
 
 ### After running third process:
 
-![alt text](image.png)
+![alt text](screenshots/image.png)
+
+### log1.txt:
+
+![alt text](screenshots/image-1.png)
+
+### log2.txt:
+
+![alt text](screenshots/image-2.png)
+
+### log3.txt:
+
+![alt text](screenshots/image-3.png)
