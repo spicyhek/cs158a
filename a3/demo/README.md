@@ -51,7 +51,7 @@ This is a simulation of the leader election process on a network.
 
 ## Example Runthrough
 
-### After running third process:
+### After running third process (same output for each terminal):
 
 ![alt text](screenshots/image.png)
 
